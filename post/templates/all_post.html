@@ -1,0 +1,43 @@
+{% extends "layout.html" %} 
+{% block style %}
+<style>
+    * {
+        padding: 0%;
+        margin: 0px;
+        box-sizing: border-box;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+    h1{
+        text-align: left;
+    }
+    h2{
+        margin: 20px;
+    }
+    .post{
+        
+        padding: 30px;
+        text-align: center;
+        background-color: burlywood;
+
+    }
+    .out{
+        margin: 10%;
+    }
+</style>
+{%endblock%}
+
+{% block title %} 
+Home 
+{% endblock %} 
+{% block body %} 
+{% for post in all_post %}
+<div class="out">
+
+    <div class="post">
+
+        <h1><img src="{{post[4]}}" alt="" /> {{post[2]}}</h1>
+        <h2>{{post[7]}}</h2>
+    </div>
+</div>
+{%endfor%} 
+{%endblock%}
