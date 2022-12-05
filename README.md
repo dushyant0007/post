@@ -1,3 +1,3 @@
 # post
-pip install -r requirements. txt command
-flask run
+#pip install -r requirements.txt
+#flask run
