@@ -137,4 +137,4 @@ def all_post():
 
 
 if __name__ == "__main__":  # and the final closing function
-    app.run(debug=True)
+    app.run(debug=Flase,host='0,0,0,0')
