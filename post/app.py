@@ -1,13 +1,14 @@
-# app.py
+
 import os
+import sqlite3
 import pathlib
 import requests
-from flask import Flask, session, abort, redirect, request,render_template
+from flask import Flask, session, abort, redirect, request, render_template
 from google.oauth2 import id_token
 from google_auth_oauthlib.flow import Flow
 from pip._vendor import cachecontrol
 import google.auth.transport.requests
-import sqlite3
+
 
 app = Flask("post")  # naming our application
 # it is necessary to set a password when dealing with OAuth 2.0
@@ -21,16 +22,7 @@ GOOGLE_CLIENT_ID = "1053079030385-90cls831re1tbo1p6ev9eecnfukg6lod.apps.googleus
 client_secrets_file = os.path.join(
     pathlib.Path(__file__).parent, "client_secret.json")
 
-flow = Flow.from_client_secrets_file(  # Flow is OAuth 2.0 a class that stores all the information on how we want to authorize our users
-    client_secrets_file=client_secrets_file,
-    scopes=["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email",
-            "openid"],  # here we are specifing what do we get after the authorization
-    # and the redirect URI is the point where the user will end up after the authorization
-    redirect_uri="http://127.0.0.1:5000/callback"
-)
-
-
-
+flow = Flow.from_client_secrets_file( client_secrets_file=client_secrets_file,scopes=["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email","openid"], redirect_uri="https://dushyant0007-solid-cod-rp7q9w7qjwvhxjpx-5000.preview.app.github.dev/callback")
 
 
 # a function to check if the user is authorized or not
@@ -73,7 +65,7 @@ def callback():
 
     # defing the results to show on the page
     # session['hd'] = id_info('hd') #hd -> whatever after @ ex -> abc@this.is.hd
-    session['hd']=''
+    session['hd'] = ''
     try:
         session['hd'] = id_info['hd']
     finally:
@@ -85,10 +77,10 @@ def callback():
         print(id_info)
         print('--------------,.,.,.,.,,->')
         print(session['hd'])
-        if session['hd']=='skit.ac.in':
+        if session['hd'] == 'skit.ac.in':
             return redirect("/home")
         else:
-            return redirect('/')            
+            return redirect('/')
 
 
 @app.route("/logout")  # the logout page and function
@@ -98,7 +90,7 @@ def logout():
 
 
 @app.route("/")  # the home page where the login button will be located
-def index(): 
+def index():
     return render_template('index.html')
 
 
@@ -107,34 +99,39 @@ def index():
 @login_is_required
 def protected_area():
     with sqlite3.connect("database.db") as db:
-        x = db.execute("select google_id from user where google_id=(?)",(session['google_id'],)).fetchone()    
+        x = db.execute("select google_id from user where google_id=(?)",
+                       (session['google_id'],)).fetchone()
         print("The value of x")
         print(x)
         if x == None:
-            db.execute("insert into user (google_id,name,email,photo) values (?,?,?,?) ",(session['google_id'],session['name'],session["email"],session["photo"]))
-            db.commit()   
+            db.execute("insert into user (google_id,name,email,photo) values (?,?,?,?) ",
+                       (session['google_id'], session['name'], session["email"], session["photo"]))
+            db.commit()
     return render_template('home.html')
 
-    
-@app.route("/post",methods=['POST'])
+
+@app.route("/post", methods=['POST'])
 def post():
     if request.form.get('post') == "":
         return redirect("/home")
     with sqlite3.connect("database.db") as db:
         post = request.form.get('post')
-        db.execute("insert into post (google_id,post) values (?,?) ",(session['google_id'],post))
-        db.commit()    
+        db.execute("insert into post (google_id,post) values (?,?) ",
+                   (session['google_id'], post))
+        db.commit()
     return redirect('/home')
+
 
 @app.route("/all_post")
 def all_post():
     if 'google_id' not in session:
         return redirect('/')
-    with sqlite3.connect("database.db") as db:   
-        p = db.execute('select * from (user join post on user.google_id=post.google_id)').fetchall()  
-        print(p) 
-        return render_template('all_post.html',all_post=p)
+    with sqlite3.connect("database.db") as db:
+        p = db.execute(
+            'select * from (user join post on user.google_id=post.google_id)').fetchall()
+        print(p)
+        return render_template('all_post.html', all_post=p)
 
 
 if __name__ == "__main__":  # and the final closing function
-    app.run(debug=Flase,host='0,0,0,0')
+    app.run(debug=True)
