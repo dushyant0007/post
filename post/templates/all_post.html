@@ -7,22 +7,7 @@
         box-sizing: border-box;
         font-family: Arial, Helvetica, sans-serif;
     }
-    h1{
-        text-align: left;
-    }
-    h2{
-        margin: 20px;
-    }
-    .post{
-        
-        padding: 30px;
-        text-align: center;
-        background-color: burlywood;
 
-    }
-    .out{
-        margin: 10%;
-    }
 </style>
 {%endblock%}
 
@@ -31,12 +16,13 @@ Home
 {% endblock %} 
 {% block body %} 
 {% for post in all_post %}
-<div class="out">
 
-    <div class="post">
-
-        <h1><img src="{{post[4]}}" alt="" /> {{post[2]}}</h1>
-        <h2>{{post[7]}}</h2>
+<div class="out" style="background-color: chocolate; margin:4vh 0 ;">
+    <div class="post" style="background-color: burlywood;">
+        <h1><img width="50vw" src="{{post[4]}}" alt="" /> {{post[2]}}</h1>
+        <div class="text" style="padding: 4vw; background-color: cadetblue;" >
+        <h3>{{post[7]}}</h3>
+         </div>
     </div>
 </div>
 {%endfor%} 

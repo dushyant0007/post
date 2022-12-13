@@ -17,7 +17,9 @@
       <h1>{{session['name']}}</h1>
       <h2>{{session['email']}}</h2>
   
-      <div style="text-align: center;">
+      <div style="padding: 5vw;">
+
+      <div  style="align-items: left; padding: 5vw; width: 90vw; background-color: rgb(147, 190, 224);">
 
       <form action="/logout">
         <input class="btn btn-dark" type="submit" value="Logout" name="" id="">
@@ -25,14 +27,17 @@
       <a href="/all_post"><button class="btn btn-dark">All Post</button></a>
       <a href="/rate_my_professor"><button class="btn btn-dark">Rate Professor</button></a>
   
-      <div class="post">
+      <div class="post" style="padding-top: 3vh;" >
         <p>Add New Post</p>
         <form action="/post" method="POST">
-          <textarea name="post" id="" cols="30" rows="10"></textarea>
+          <textarea name="post" id="" cols="30" rows="5"></textarea>
           <br />
-          <input class="btn btn-dark" type="submit" name="" id="" />
+          <input class="btn btn-dark" type="submit" value="Add Post" name="" id="" />
         </form>
       </div>
+
+
+    </div>  
 
       </div>
      

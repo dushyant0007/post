@@ -22,8 +22,7 @@ GOOGLE_CLIENT_ID = "1053079030385-90cls831re1tbo1p6ev9eecnfukg6lod.apps.googleus
 client_secrets_file = os.path.join(
     pathlib.Path(__file__).parent, "client_secret.json")
 
-flow = Flow.from_client_secrets_file(client_secrets_file=client_secrets_file, scopes=[
-                                     "https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email", "openid"], redirect_uri="https://dushyant0007-solid-cod-rp7q9w7qjwvhxjpx-5000.preview.app.github.dev/callback")
+flow = Flow.from_client_secrets_file(client_secrets_file=client_secrets_file, scopes=["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email", "openid"], redirect_uri="https://dushyant0007-solid-cod-rp7q9w7qjwvhxjpx-5000.preview.app.github.dev/callback")
 
 
 # a function to check if the user is authorized or not
@@ -81,7 +80,7 @@ def callback():
         if session['hd'] == 'skit.ac.in':
             return redirect("/home")
         else:
-            return redirect('/')
+            return render_template('invalid_email.html')
 
 
 @app.route("/logout")  # the logout page and function
@@ -105,8 +104,7 @@ def protected_area():
         print("The value of x")
         print(x)
         if x == None:
-            db.execute("insert into user (google_id,name,email,photo) values (?,?,?,?) ",
-                       (session['google_id'], session['name'], session["email"], session["photo"]))
+            db.execute("insert into user (google_id,name,email,photo) values (?,?,?,?) ",(session['google_id'], session['name'], session["email"], session["photo"]))
             db.commit()
     return render_template('home.html')
 
@@ -117,8 +115,7 @@ def post():
         return redirect("/home")
     with sqlite3.connect("database.db") as db:
         post = request.form.get('post')
-        db.execute("insert into post (google_id,post) values (?,?) ",
-                   (session['google_id'], post))
+        db.execute("insert into post (google_id,post) values (?,?) ",(session['google_id'], post))
         db.commit()
     return redirect('/home')
 
@@ -128,9 +125,8 @@ def all_post():
     if 'google_id' not in session:
         return redirect('/')
     with sqlite3.connect("database.db") as db:
-        p = db.execute(
-            'select * from (user join post on user.google_id=post.google_id)').fetchall()
-        print(p)
+        p = db.execute('select * from (user join post on user.google_id=post.google_id)').fetchall()
+        # print(p)
         return render_template('all_post.html', all_post=p)
 
 
@@ -141,10 +137,13 @@ def rate_my_professor():
     else:
         if request.method == 'POST':
             with sqlite3.connect("database.db") as db:
-                p = db.execute('select * from teachers where Name like ?',
-                               (f'%{request.form.get("search_item")}%',)).fetchall()
+                p = db.execute('select * from teachers where Name like ?',(f'%{request.form.get("search_item")}%',)).fetchall()
                 # print(p)
-                return render_template('rate_my_professor.html', all_professor=p)
+                r = db.execute('select * from teacher_ratings').fetchall()
+                print(r)
+                # print(p)
+                all = {'all_professor': p, 'ratings': r}
+                return render_template('rate_my_professor.html', all=all)
 
         if request.method == 'GET':
             with sqlite3.connect("database.db") as db:
@@ -152,8 +151,8 @@ def rate_my_professor():
                 r = db.execute('select * from teacher_ratings').fetchall()
                 print(r)
                 # print(p)
-                all = {'all_professor':p,'ratings':r}
-                return render_template('rate_my_professor.html',all={'all_professor':p,'ratings':r})
+                all = {'all_professor': p, 'ratings': r}
+                return render_template('rate_my_professor.html', all={'all_professor': p, 'ratings': r})
 
 
 @app.route("/add_rating", methods=["GET", "POST"])
@@ -162,11 +161,10 @@ def add_rating():
         return redirect('/')
     else:
         with sqlite3.connect("database.db") as db:
-                db.execute('insert into teacher_ratings (userGoogle_id,Emp_No,rating) values (?,?,?)',(session['google_id'],request.form.get('emp_no'),request.form.get('rating')))
-                db.commit()
-                
+            db.execute('insert into teacher_ratings (userGoogle_id,Emp_No,rating) values (?,?,?)',(session['google_id'], request.form.get('emp_no'), request.form.get('rating')))
+            db.commit()
+
         return redirect('/rate_my_professor')
-        
 
 
 if __name__ == "__main__":  # and the final closing function
