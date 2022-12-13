@@ -153,15 +153,6 @@ def rate_my_professor():
                 print(r)
                 # print(p)
                 all = {'all_professor':p,'ratings':r}
-                # for one in p:
-                #     for rating in all['ratings']:
-                #         print(type(rating[2]), int(one[0]))
-                #         if rating[2]==int(one[0]):
-                #             print(f'--->')
-                #             for r in rating[3]:
-                #                 print(f'r->{r}')
-
-
                 return render_template('rate_my_professor.html',all={'all_professor':p,'ratings':r})
 
 
