@@ -22,7 +22,8 @@ GOOGLE_CLIENT_ID = "1053079030385-90cls831re1tbo1p6ev9eecnfukg6lod.apps.googleus
 client_secrets_file = os.path.join(
     pathlib.Path(__file__).parent, "client_secret.json")
 
-flow = Flow.from_client_secrets_file( client_secrets_file=client_secrets_file,scopes=["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email","openid"], redirect_uri="https://dushyant0007-solid-cod-rp7q9w7qjwvhxjpx-5000.preview.app.github.dev/callback")
+flow = Flow.from_client_secrets_file(client_secrets_file=client_secrets_file, scopes=[
+                                     "https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email", "openid"], redirect_uri="https://dushyant0007-solid-cod-rp7q9w7qjwvhxjpx-5000.preview.app.github.dev/callback")
 
 
 # a function to check if the user is authorized or not
@@ -131,6 +132,50 @@ def all_post():
             'select * from (user join post on user.google_id=post.google_id)').fetchall()
         print(p)
         return render_template('all_post.html', all_post=p)
+
+
+@app.route("/rate_my_professor", methods=["GET", "POST"])
+def rate_my_professor():
+    if 'google_id' not in session:
+        return redirect('/')
+    else:
+        if request.method == 'POST':
+            with sqlite3.connect("database.db") as db:
+                p = db.execute('select * from teachers where Name like ?',
+                               (f'%{request.form.get("search_item")}%',)).fetchall()
+                # print(p)
+                return render_template('rate_my_professor.html', all_professor=p)
+
+        if request.method == 'GET':
+            with sqlite3.connect("database.db") as db:
+                p = db.execute('select * from teachers').fetchall()
+                r = db.execute('select * from teacher_ratings').fetchall()
+                print(r)
+                # print(p)
+                all = {'all_professor':p,'ratings':r}
+                # for one in p:
+                #     for rating in all['ratings']:
+                #         print(type(rating[2]), int(one[0]))
+                #         if rating[2]==int(one[0]):
+                #             print(f'--->')
+                #             for r in rating[3]:
+                #                 print(f'r->{r}')
+
+
+                return render_template('rate_my_professor.html',all={'all_professor':p,'ratings':r})
+
+
+@app.route("/add_rating", methods=["GET", "POST"])
+def add_rating():
+    if 'google_id' not in session:
+        return redirect('/')
+    else:
+        with sqlite3.connect("database.db") as db:
+                db.execute('insert into teacher_ratings (userGoogle_id,Emp_No,rating) values (?,?,?)',(session['google_id'],request.form.get('emp_no'),request.form.get('rating')))
+                db.commit()
+                
+        return redirect('/rate_my_professor')
+        
 
 
 if __name__ == "__main__":  # and the final closing function

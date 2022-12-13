@@ -1,0 +1,124 @@
+{% extends "layout.html" %} {%block style%}
+<style>
+  * {
+    padding: 0%;
+    margin: 0px;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  .container-wrapper {
+    background-color: #edf0f9;
+  }
+
+  .container {
+    height: 100vh;
+  }
+
+  .rating-wrapper {
+    align-self: center;
+    box-shadow: 7px 7px 25px rgba(198, 206, 237, 0.7), -7px -7px 35px rgba(255, 255, 255, 0.7), inset 0px 0px 4px rgba(255, 255, 255, 0.9), inset 7px 7px 15px rgba(198, 206, 237, 0.8);
+    border-radius: 5rem;
+    display: inline-flex;
+    direction: rtl !important;
+    padding: 1.5rem 2.5rem;
+    margin-left: auto;
+  }
+
+  .rating-wrapper label {
+    color: #e1e6f6;
+    cursor: pointer;
+    display: inline-flex;
+    font-size: 3rem;
+    padding: 1rem 0.6rem;
+    transition: color 0.5s;
+  }
+
+  .rating-wrapper svg {
+    -webkit-text-fill-color: transparent;
+    -webkit-filter: drop-shadow 4px 1px 6px #c6ceed;
+    filter: drop-shadow(5px 1px 3px #c6ceed);
+  }
+
+  .rating-wrapper input {
+    height: 100%;
+    width: 100%;
+  }
+
+  .rating-wrapper input {
+    display: none;
+  }
+
+  .rating-wrapper label:hover,
+  .rating-wrapper label:hover~label,
+  .rating-wrapper input:checked~label {
+    color: #34ac9e;
+  }
+
+  .rating-wrapper label:hover,
+  .rating-wrapper label:hover~label,
+  .rating-wrapper input:checked~label {
+    color: #34ac9e;
+  }
+</style>
+{%endblock%} {% block title %} Rate Professor {% endblock %} {% block body %}
+<div>
+
+  <form action="/rate_my_professor" method="POST" style="margin: 50px;">
+    <div class="form-group">
+      <input style="width: 40%;" type="text" name="search_item" class="form-control" placeholder="Search Name">
+      <button type="submit" style="margin-top:10px ;" class="btn btn-dark">Search</button>
+    </div>
+    <!-- <input type="submit"  class="btn btn-primary" value="Search"> -->
+    <!-- <input type="text" name="search_item" id="">  -->
+
+  </form>
+  <table style="margin: 50px; width: 90%;" class="table table-striped">
+    <thead class="thead-dark">
+      <tr style="margin: 10px;" role="row">
+        <th>Emp No</th>
+        <!-- <th>Photo</th> -->
+        <th>Name</th>
+        <th>Department</th>
+        <th>Designation</th>
+        <th>Rating</th>
+        <th>Your Given Rating</th>
+      </tr>
+    </thead>
+    <tbody>
+
+
+      {% for one in all['all_professor'] %}
+      <tr role="row" class="odd">
+        <td data-title="Emp No" class="">{{one[0]}}</td>
+        <td data-title="Name" class="sorting_1">{{one[2]}}</td>
+        <td data-title="Department">{{one[3]}}</td>
+        <td data-title="Designation" class="">{{one[4]}}</td>
+        <td data-title="Rating">
+
+          <form action="/add_rating" method="POST">
+           
+            <label class="form-label" for="rating">Rating (between 1 and 5):</label>
+            <input class="form-range range-dark" type="range" id="rating" name="rating" min="1" max="5">
+
+            <input class="form-range range-dark" type="hidden" id="rating" name="emp_no" value="{{one[0]}}">
+
+            <button class="btn btn-dark" >Add Rating</button>
+
+          </form> 
+        </td>
+        <td>
+            {% for rating in all['ratings'] %}
+            {% if rating[2]== one[0]|int %}
+             {% for x in range(1,int(one[0])+1) %} </p>⭐️ </p>  {% endfor %} 
+            {% endif %}
+            {% endfor %}
+        </td>
+      </tr>
+      {%endfor%}
+    </tbody>
+  </table>
+
+
+</div>
+{% endblock %}
