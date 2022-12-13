@@ -8,7 +8,12 @@ from google.oauth2 import id_token
 from google_auth_oauthlib.flow import Flow
 from pip._vendor import cachecontrol
 import google.auth.transport.requests
+<<<<<<< HEAD
 
+=======
+import sqlite3
+ 
+>>>>>>> 9b42927a7b1419f4cdc16181c2ae090d3f66c115
 
 app = Flask("post")  # naming our application
 # it is necessary to set a password when dealing with OAuth 2.0
