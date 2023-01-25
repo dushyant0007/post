@@ -90,7 +90,7 @@ def logout():
 
 @app.route("/")  # the home page where the login button will be located
 def index():
-    return render_template('index.html')
+    return render_template('solar.html')
 
 
 # the page where only the authorized users can go to
